@@ -1,86 +1,84 @@
 # 🛡️ NeuroFence
-### LLM Weight Poisoning & Backdoor Scanner
+## AI-Powered LLM Backdoor & Weight Poisoning Detection Framework
 
-NeuroFence is an AI Security and Model Forensics project designed to detect potential backdoors and weight poisoning in Large Language Models (LLMs). It analyzes neuron activation patterns generated during adversarial prompt testing to identify suspicious model behavior before deployment.
+![Status](https://img.shields.io/badge/Status-Under%20Development-orange)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![PyTorch](https://img.shields.io/badge/PyTorch-AI-red)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-> **Internship Project** | AI Security | Model Forensics | Cybersecurity Engineering
-
----
-
-## 📖 Overview
-
-Modern organizations increasingly rely on open-source Large Language Models (LLMs). However, compromised models may contain hidden backdoors that activate only when specific trigger prompts are received.
-
-NeuroFence provides an offline security analysis environment that:
-
-- Loads LLMs securely
-- Generates adversarial test prompts
-- Tracks internal neuron activations
-- Detects abnormal activation patterns
-- Calculates a model risk score
-- Generates professional security reports
-
-The project focuses on demonstrating AI security concepts in a practical and educational manner.
+> Detecting hidden backdoors and malicious behaviors in Large Language Models before deployment.
 
 ---
 
-## 🎯 Objectives
+# 📌 About NeuroFence
 
-- Detect suspicious neuron activation patterns.
-- Analyze LLM behavior using adversarial prompts.
-- Provide an offline model security assessment.
-- Generate detailed forensic reports.
-- Visualize activation patterns through a desktop interface.
+NeuroFence is an AI Security project developed as part of the **InfoTact Cyber Security Internship**.
+
+The project focuses on detecting hidden backdoors and weight poisoning attacks in Large Language Models (LLMs) using adversarial prompt testing, neuron activation analysis, and anomaly detection.
+
+Instead of trusting an AI model blindly, NeuroFence analyzes how the model behaves internally and identifies suspicious activation patterns that may indicate malicious modifications.
 
 ---
 
-# 🚀 Features
+# 🎯 Project Objectives
+
+- Securely load open-source LLMs.
+- Generate adversarial and fuzzed prompts.
+- Capture internal neuron activation patterns.
+- Detect suspicious model behavior.
+- Calculate an AI security risk score.
+- Generate professional security reports.
+- Visualize analysis through a desktop application.
+
+---
+
+# 🚀 Key Features
 
 - 🔒 Secure Model Loader
-- 🧠 Adversarial Prompt Fuzzer
-- 📊 Activation Tracking using PyTorch Hooks
-- ⚠️ Suspicious Neuron Detection
+- 🧠 Prompt Fuzzer
+- 📊 Activation Tracking
+- ⚠️ Backdoor Detection Engine
 - 📈 Risk Score Calculation
-- 📄 Automated PDF Security Reports
-- 🖥️ Desktop GUI (PyQt6)
-- 📦 Offline Analysis Environment
+- 📄 PDF Security Report Generator
+- 🖥️ PyQt6 Desktop GUI
+- 📦 Offline AI Security Analysis
 
 ---
 
-# 🏗️ Project Architecture
+# 🏗️ System Architecture
 
-```
-                LLM Model
-                    │
-                    ▼
-           Secure Model Loader
-                    │
-                    ▼
-          Adversarial Prompt Fuzzer
-                    │
-                    ▼
-          Activation Tracker
-                    │
-                    ▼
-        Detection & Risk Analysis
-                    │
-                    ▼
-          Security Report Generator
-                    │
-                    ▼
-              Desktop Dashboard
+```text
+              Open Source LLM
+                     │
+                     ▼
+          Secure Model Loader
+                     │
+                     ▼
+        Adversarial Prompt Fuzzer
+                     │
+                     ▼
+        Neuron Activation Tracker
+                     │
+                     ▼
+      Detection & Risk Analysis Engine
+                     │
+                     ▼
+        Security Report Generator
+                     │
+                     ▼
+             Desktop Dashboard
 ```
 
 ---
 
 # 🛠️ Technology Stack
 
-| Category | Technologies |
-|----------|--------------|
-| Programming | Python 3 |
+| Category | Technology |
+|-----------|------------|
+| Language | Python 3.12 |
 | AI Framework | PyTorch |
-| LLM Framework | Hugging Face Transformers |
-| Model Format | SafeTensors |
+| LLM | Hugging Face Transformers |
+| Safe Model Loading | SafeTensors |
 | GUI | PyQt6 |
 | Reports | ReportLab |
 | Data Processing | NumPy, Pandas |
@@ -91,7 +89,7 @@ The project focuses on demonstrating AI security concepts in a practical and edu
 
 # 📂 Project Structure
 
-```
+```text
 NeuroFence/
 │
 ├── app.py
@@ -117,93 +115,125 @@ NeuroFence/
 
 # 📅 Development Roadmap
 
-### Phase 1
+## Phase 1
 - Repository Setup
-- Project Structure
+- Git Workflow
 - Documentation
 
-### Phase 2
+## Phase 2
 - Secure Model Loader
 - Sandbox Environment
 
-### Phase 3
+## Phase 3
 - Prompt Fuzzer
 - Activation Tracking
 
-### Phase 4
+## Phase 4
 - Detection Engine
 - Risk Scoring
 
-### Phase 5
-- PDF Report Generator
+## Phase 5
+- GUI Development
+- PDF Report Generation
 
-### Phase 6
-- Desktop GUI
-
-### Phase 7
+## Phase 6
 - Testing
+- Bug Fixes
+- Performance Optimization
+
+## Phase 7
 - Documentation
-- Final Release
+- Final Demonstration
+- Release v1.0
 
 ---
 
-# 📌 Project Status
+# 📊 Current Progress
 
-> 🚧 Under Development
+- ✅ Repository Created
+- ✅ Git Branch Strategy
+- ✅ Initial Project Structure
+- ⏳ Secure Model Loader
+- ⏳ Prompt Fuzzer
+- ⏳ Activation Tracker
+- ⏳ Detection Engine
+- ⏳ GUI Development
+- ⏳ PDF Report
+- ⏳ Final Documentation
 
-Current Progress:
+---
 
-- [x] Repository Created
-- [ ] Project Structure
-- [ ] Secure Model Loader
-- [ ] Prompt Fuzzer
-- [ ] Activation Tracker
-- [ ] Detection Engine
-- [ ] GUI
-- [ ] PDF Reports
-- [ ] Final Documentation
+# 🌿 Git Workflow
+
+```text
+main
+│
+└── develop
+      │
+      ├── feature/core-engine
+      └── feature/gui-fuzzer
+```
+
+- `main` → Stable releases
+- `develop` → Integration branch
+- `feature/core-engine` → Core AI detection modules
+- `feature/gui-fuzzer` → GUI, Prompt Fuzzer & Reports
 
 ---
 
 # 👥 Team
 
-| Role | Responsibility |
-|------|----------------|
-| Team Lead | Project Architecture, Integration, Documentation |
-| Member 2 | Secure Model Loader & Sandbox |
-| Member 3 | Prompt Fuzzer & Activation Tracker |
-| Member 4 | Detection Engine & Risk Scoring |
-| Member 5 | GUI & PDF Report Generator |
+| Member | Responsibility |
+|----------|----------------|
+| **Giriraju C M** | Team Lead, Project Architecture, Model Loader, Detection Engine, GitHub Management, Integration |
+| **Nikita** | Prompt Fuzzer, Activation Tracker, GUI Development, PDF Report Generation |
 
 ---
 
-# 📄 License
+# 📌 Project Status
 
-This project is developed for educational and research purposes as part of a cybersecurity internship.
+> 🚧 **Under Active Development**
 
----
-
-# ⭐ Future Enhancements
-
-- Multi-model comparison
-- Support for additional LLM architectures
-- Interactive activation heatmaps
-- Model fingerprinting
-- Enhanced anomaly detection
-- Extended forensic reporting
+This repository is actively being developed as part of the InfoTact Internship Program.
 
 ---
 
-## 🤝 Contributing
+# 🤝 Contribution Workflow
 
-Team members should work on their assigned feature branches and submit Pull Requests for review before merging into the development branch.
+1. Create or switch to your assigned feature branch.
+2. Implement your assigned module.
+3. Commit with meaningful messages.
+4. Push your branch.
+5. Create a Pull Request to `develop`.
+6. After review and testing, merge into `develop`.
+7. Stable milestones are merged into `main`.
 
 ---
 
-## 📧 Contact
+# 📜 License
 
-**GitHub:** https://github.com/girirajuinfo
+This project is released under the MIT License.
 
 ---
 
-> **NeuroFence** — Strengthening AI Security Through Model Forensics.
+# 📧 Contact
+
+**Project Lead:** Giriraju C M
+
+- GitHub: https://github.com/girirajuinfo
+- Repository: https://github.com/girirajuinfo/NeuroFence
+
+---
+
+## ⭐ Future Scope
+
+- Transformer Layer Heatmaps
+- Multi-Model Comparison
+- Explainable AI Risk Analysis
+- Model Fingerprinting
+- Advanced Backdoor Detection
+- Enterprise Security Dashboard
+
+---
+
+> **"Securing AI Models Before They Secure the World."**
