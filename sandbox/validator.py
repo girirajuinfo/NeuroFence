@@ -1,49 +1,90 @@
+"""
+validator.py
+
+Validate that a Hugging Face model directory contains
+the required files before loading.
+"""
+
 from pathlib import Path
-
-REQUIRED_FILES = [
-    "config.json",
-    "tokenizer.json"
-]
-
-OPTIONAL_MODEL_FILES = [
-    "model.safetensors",
-    "pytorch_model.bin"
-]
+from utils import logger
 
 
-def validate_model(model_path):
-    model_path = Path(model_path)
+class ModelValidator:
+    """
+    Validates a Hugging Face model directory.
+    """
 
-    if not model_path.exists():
-        print("❌ Model directory not found.")
-        return False
+    REQUIRED_FILES = [
+        "config.json",
+        "tokenizer_config.json"
+    ]
 
-    missing = []
+    WEIGHT_FILES = [
+        "model.safetensors",
+        "pytorch_model.bin"
+    ]
 
-    for file in REQUIRED_FILES:
-        if not (model_path / file).exists():
-            missing.append(file)
+    OPTIONAL_FILES = [
+        "tokenizer.json"
+    ]
 
-    model_exists = False
+    @staticmethod
+    def validate(model_path):
+        """
+        Validate the model directory.
 
-    for file in OPTIONAL_MODEL_FILES:
-        if (model_path / file).exists():
-            model_exists = True
+        Args:
+            model_path (str): Path to the model folder.
 
-    if not model_exists:
-        missing.append("model.safetensors OR pytorch_model.bin")
+        Returns:
+            tuple:
+                (True, "Valid model directory")
+                or
+                (False, "Reason for failure")
+        """
 
-    if missing:
-        print("\n❌ Validation Failed\n")
+        path = Path(model_path)
 
-        for item in missing:
-            print(f"Missing: {item}")
+        logger.info(f"Validating model directory: {path}")
 
-        return False
+        if not path.exists():
+            logger.error("Model directory does not exist.")
+            return False, "Model directory does not exist."
 
-    print("\n✅ Model validation successful.")
-    return True
+        if not path.is_dir():
+            logger.error("Provided path is not a directory.")
+            return False, "Provided path is not a directory."
 
+        for filename in ModelValidator.REQUIRED_FILES:
+            file_path = path / filename
 
-if __name__ == "__main__":
-    validate_model("models")
+            if not file_path.exists():
+                logger.error(f"Missing required file: {filename}")
+                return False, f"Missing required file: {filename}"
+
+        weight_found = False
+
+        for weight_file in ModelValidator.WEIGHT_FILES:
+            if (path / weight_file).exists():
+                weight_found = True
+                break
+
+        if not weight_found:
+            logger.error(
+                "Missing model weights (model.safetensors or pytorch_model.bin)."
+            )
+            return (
+                False,
+                "Missing model weights (model.safetensors or pytorch_model.bin)."
+            )
+
+        optional_file = path / "tokenizer.json"
+
+        if optional_file.exists():
+            logger.info("tokenizer.json found.")
+        else:
+            logger.warning("tokenizer.json not found (may be acceptable).")
+
+        logger.success("Model directory validation successful.")
+
+        return True, "Valid model directory"
