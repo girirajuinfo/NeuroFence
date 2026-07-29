@@ -6,4 +6,4 @@ Completed:
 - Added model validation module
 - Installed project dependencies
 - Tested model loading
-- Tested validation logic
+- Tested validation logicg
