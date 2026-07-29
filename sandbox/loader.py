@@ -1,31 +1,57 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
+"""
+loader.py
 
-MODEL_NAME = "distilgpt2"
+Safely load a Hugging Face model and tokenizer
+from a validated local directory.
+"""
 
-def load_model():
-    try:
-        print(f"Loading model: {MODEL_NAME}")
+from pathlib import Path
 
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+from transformers import AutoModel, AutoTokenizer
 
-        model = AutoModelForCausalLM.from_pretrained(
-            MODEL_NAME,
-            torch_dtype=torch.float32
-        )
+from utils import logger
 
-        print("\nModel loaded successfully!\n")
 
-        print(f"Model Name      : {MODEL_NAME}")
-        print(f"Model Type      : {model.config.model_type}")
-        print(f"Hidden Size     : {model.config.n_embd}")
-        print(f"Layers          : {model.config.n_layer}")
-        print(f"Vocabulary Size : {model.config.vocab_size}")
+class ModelLoader:
+    """
+    Loads a Hugging Face model and tokenizer.
+    """
 
-        return tokenizer, model
+    @staticmethod
+    def load(model_path):
+        """
+        Load the tokenizer and model from a local directory.
 
-    except Exception as e:
-        print(f"Error: {e}")
+        Args:
+            model_path (str): Path to the local model directory.
 
-if __name__ == "__main__":
-    load_model()
+        Returns:
+            tuple:
+                (tokenizer, model) on success
+                (None, None) on failure
+        """
+
+        model_path = Path(model_path)
+
+        logger.info(f"Loading model from: {model_path}")
+
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(
+                model_path,
+                local_files_only=True
+            )
+
+            logger.success("Tokenizer loaded successfully.")
+
+            model = AutoModel.from_pretrained(
+                model_path,
+                local_files_only=True
+            )
+
+            logger.success("Model loaded successfully.")
+
+            return tokenizer, model
+
+        except Exception as e:
+            logger.error(f"Failed to load model: {e}")
+            return None, None
