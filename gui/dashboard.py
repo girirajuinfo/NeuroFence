@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QProgressBar,
     QTextEdit,
     QVBoxLayout,
     QWidget,
@@ -31,16 +32,22 @@ class Dashboard(QWidget):
         title = QLabel("NeuroFence Dashboard")
         title.setStyleSheet("font-size:22px;font-weight:bold;")
         main_layout.addWidget(title)
-
+       
         button_layout = QHBoxLayout()
 
         self.upload_button = QPushButton("Upload Model")
         self.load_button = QPushButton("Load Model")
+        self.start_scan_button = QPushButton("Start Scan")
 
         self.upload_button.clicked.connect(self.select_model_folder)
+        self.start_scan_button.clicked.connect(self.start_scan)
+
+        
 
         button_layout.addWidget(self.upload_button)
         button_layout.addWidget(self.load_button)
+        button_layout.addWidget(self.start_scan_button)
+
         button_layout.addStretch()
 
         main_layout.addLayout(button_layout)
@@ -68,7 +75,16 @@ class Dashboard(QWidget):
 
         info_group.setLayout(info_layout)
         main_layout.addWidget(info_group)
+        progress_group = QGroupBox("Scan Progress")
+        progress_layout = QVBoxLayout()
 
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setValue(0)
+
+        progress_layout.addWidget(self.progress_bar)
+        progress_group.setLayout(progress_layout)
+
+        main_layout.addWidget(progress_group)
         log_group = QGroupBox("Console Log")
         log_layout = QVBoxLayout()
 
@@ -79,7 +95,18 @@ class Dashboard(QWidget):
         log_group.setLayout(log_layout)
 
         main_layout.addWidget(log_group)
+        activation_group = QGroupBox("Activation Summary")
+        activation_layout = QVBoxLayout()
 
+        activation_layout.addWidget(QLabel("Layer 1 : Waiting..."))
+        activation_layout.addWidget(QLabel("Layer 2 : Waiting..."))
+        activation_layout.addWidget(QLabel("Layer 3 : Waiting..."))
+        activation_layout.addWidget(QLabel("Layer 4 : Waiting..."))
+
+        activation_group.setLayout(activation_layout)
+
+        main_layout.addWidget(activation_group)
+        
     def _log(self, message: str):
         self.console.append(message)
 
@@ -105,3 +132,17 @@ class Dashboard(QWidget):
 
         self.status_changed.emit("Model Selected")
         self.status_changed.emit("Waiting for Scan")
+        
+    def start_scan(self):
+        self.status_changed.emit("Scanning...")
+
+        self._log("")
+        self._log("Starting Scan...")
+        self._log("Prompt 1 Completed")
+        self._log("Prompt 2 Completed")
+        self._log("Prompt 3 Completed")
+        self._log("Scan Finished")
+
+        self.progress_bar.setValue(100)
+
+        self.status_changed.emit("Scan Complete")
