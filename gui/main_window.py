@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
 
     def _setup_ui(self):
         self.setWindowTitle("NeuroFence")
-        self.setFixedSize(1000, 700)
+        self.resize(1000, 700)
 
         icon_path = os.path.join("assets", "icon.png")
         if os.path.exists(icon_path):
