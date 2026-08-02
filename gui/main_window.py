@@ -17,11 +17,12 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.dashboard = Dashboard()
+        self.dashboard.start_scan_button.setEnabled(False)
         self._setup_ui()
 
     def _setup_ui(self):
         self.setWindowTitle("NeuroFence")
-        self.resize(1000, 700)
+        self.resize(1400, 900)
 
         icon_path = os.path.join("assets", "icon.png")
         if os.path.exists(icon_path):
