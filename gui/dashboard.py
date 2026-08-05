@@ -1,5 +1,17 @@
 from datetime import datetime
 
+import sys
+import os
+import json
+
+sys.path.append(
+    os.path.dirname(
+        os.path.dirname(__file__)
+    )
+)
+
+from app import main as run_scan
+
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtWidgets import (
     QFileDialog,
@@ -8,16 +20,15 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QProgressBar,
     QTextEdit,
     QVBoxLayout,
     QWidget,
     QTableWidget,
     QTableWidgetItem,
     QScrollArea,
+    QProgressBar,
+    QMessageBox,
 )
-
-
 
 
 class Dashboard(QWidget):
@@ -42,8 +53,8 @@ class Dashboard(QWidget):
         content_layout = QVBoxLayout(container)
         content_layout.setSpacing(15)
 
-        main_layout.addWidget(scroll)
         scroll.setWidget(container)
+        main_layout.addWidget(scroll)
         main_layout.setContentsMargins(20, 20, 20, 20)
         main_layout.setSpacing(20)
 
@@ -66,6 +77,8 @@ class Dashboard(QWidget):
 
         self.export_button = QPushButton("Export Report")
         self.export_button.setEnabled(False)
+        self.export_button.clicked.connect(self.export_report)
+
         self.upload_button.clicked.connect(self.select_model_folder)
         self.load_button.clicked.connect(self.select_model_folder)
         self.start_scan_button.clicked.connect(self.start_scan)
@@ -73,7 +86,7 @@ class Dashboard(QWidget):
         
 
         button_layout.addWidget(self.upload_button)
-        
+        button_layout.addWidget(self.load_button)
         button_layout.addWidget(self.start_scan_button)
         button_layout.addWidget(self.stop_scan_button)
         button_layout.addWidget(self.clear_button)
@@ -182,18 +195,61 @@ class Dashboard(QWidget):
 
         self.activation_table.horizontalHeader().setStretchLastSection(True)
         self.activation_table.resizeColumnsToContents()
+
+        self.activation_table.setColumnWidth(0, 180)
+        self.activation_table.setColumnWidth(1, 180)
+        self.activation_table.setColumnWidth(2, 180)
+        self.activation_table.setColumnWidth(3, 120)
+
         self.activation_table.setAlternatingRowColors(True)
         self.activation_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.activation_table.setSelectionMode(QTableWidget.SelectionMode.NoSelection)
 
-        dummy_data = [
-            ("Layer 1", "0.021", "0.95", "Normal"),
-            ("Layer 2", "0.034", "1.10", "Normal"),
-            ("Layer 3", "0.052", "1.42", "Warning"),
-            ("Layer 4", "0.023", "1.23", "Normal"),
-        ]
+        try:
+ 
+            with open(
+                "reports/layer_statistics.json",
+                "r"
+            ) as f:
 
-        for row, data in enumerate(dummy_data):
+                layer_data = json.load(f)
+
+
+            for row, (layer, stats) in enumerate(layer_data.items()):
+
+                self.activation_table.insertRow(row)
+
+                mean = stats.get("mean", 0)
+                std = stats.get("std", 0)
+                spikes = stats.get("spikes", 0)
+
+                status = "Warning" if spikes > 0 else "Normal"
+
+
+                values = [
+                    layer,
+                    f"{mean:.4f}",
+                    f"{std:.4f}",
+                    status
+                ]
+
+
+                for col, value in enumerate(values):
+
+                    self.activation_table.setItem(
+                        row,
+                        col,
+                        QTableWidgetItem(str(value))
+                    )
+
+
+        except Exception as e:
+
+            self._log(
+                f"Activation load failed: {e}",
+                "ERROR"
+            )
+    
             for col, value in enumerate(data):
                 self.activation_table.setItem(
                     row,
@@ -211,14 +267,19 @@ class Dashboard(QWidget):
 
         risk_layout = QVBoxLayout()
 
+  
         self.risk_score = QLabel("92%")
         self.risk_score.setStyleSheet(
             "font-size:32px; font-weight:bold; color:green;"
-        )
+        
+)
+
         self.risk_status = QLabel("SAFE")
+
         self.risk_status.setStyleSheet(
             "font-size:18px; font-weight:bold; color:green;"
-)
+        )
+
         risk_layout.addWidget(self.risk_score)
         risk_layout.addWidget(self.risk_status)
 
@@ -266,6 +327,9 @@ class Dashboard(QWidget):
 
         self._log("Loading Model...", "INFO")
         self._log("Model Loaded", "SUCCESS")
+
+    
+
         self._log(folder, "INFO")
         self._log("Ready to Scan", "SUCCESS")
 
@@ -287,7 +351,7 @@ class Dashboard(QWidget):
         self.status_changed.emit("Model Selected")
         self.start_scan_button.setEnabled(True)
         self.status_changed.emit("Waiting for Scan")
-        
+     
     def start_scan(self):
 
         self.status_changed.emit("Scanning...")
@@ -296,83 +360,144 @@ class Dashboard(QWidget):
         self.start_scan_button.setEnabled(False)
         self.stop_scan_button.setEnabled(True)
         self.export_button.setEnabled(False)
-        self._log("")
 
-        self._log("Loading Model...", "INFO")
-        self._log("Model Loaded", "SUCCESS")
+        self._log(
+            "Starting NeuroFence Scan...",
+            "INFO"
+        )
 
-        self.progress_bar.setValue(100)
+        try:
+            run_scan()
+
+            self._log(
+                "Backend Scan Completed",
+                "SUCCESS"
+            )
+
+        except Exception as e:
+            self._log(
+                f"Scan Error: {e}",
+                "ERROR"
+            )
+
+            QMessageBox.critical(
+                self,
+                "Scan Error",
+                str(e)
+            )
+
+            return
+
+
         self.status_changed.emit("Scan Completed")
-        self.export_button.setEnabled(True)
-        
-        self._log("Registering Hooks...", "INFO")
-        self._log("Generating Prompts...", "INFO")
-        self._log("Running Prompt 1...", "INFO")
-        self._log("Running Prompt 2...", "INFO")
-        self._log("Collecting Activations...", "INFO")
-        self._log("Scan Finished", "SUCCESS")
 
-        self.progress_bar.setValue(25)
-        self.progress_label.setText("25%")
-        self.prompt_label.setText("Prompt: 50 / 200")
-        self.remaining_label.setText("Remaining: 00:03:00")
 
-        self.progress_bar.setValue(50)
-        self.progress_label.setText("50%")
-        self.prompt_label.setText("Prompt: 100 / 200")
-        self.remaining_label.setText("Remaining: 00:02:00")
+        summary_path = "reports/scan_summary.json"
 
-        self.progress_bar.setValue(75)
-        self.progress_label.setText("75%")
-        self.prompt_label.setText("Prompt: 150 / 200")
-        self.remaining_label.setText("Remaining: 00:01:00")
+        if os.path.exists(summary_path):
 
-        self.progress_bar.setValue(100)
-        self.progress_label.setText("100%")
-        self.prompt_label.setText("Prompt: 200 / 200")
-        self.remaining_label.setText("Remaining: 00:00:00")
+            with open(summary_path, "r") as f:
+                summary = json.load(f)
 
-        self.completed.setText("200")
-        self.remaining.setText("0")
-        self.execution.setText("00:02:15")
-        self.average.setText("0.67 sec")
-        self.memory.setText("512 MB")
 
-        self.risk_score.setText("92%")
-        self.risk_status.setText("SAFE")
+            risk_score = summary.get(
+                "risk_score",
+                "N/A"
+            )
 
-        self.risk_score.setStyleSheet(
-            "font-size:32px; font-weight:bold; color:green;"
-)
+            risk_level = summary.get(
+                "risk_level",
+                "Unknown"
+            )
 
-        self.risk_status.setStyleSheet(
-            "font-size:18px; font-weight:bold; color:green;"
-)
+
+            self.risk_score.setText(
+                str(risk_score)
+            )
+
+            self.risk_status.setText(
+                risk_level
+            )
+
+
+            self._log(
+                f"Risk Level: {risk_level}",
+                "SUCCESS"
+            )
+
 
         self.upload_button.setEnabled(True)
         self.start_scan_button.setEnabled(True)
         self.stop_scan_button.setEnabled(False)
         self.export_button.setEnabled(True)
 
-        self.status_changed.emit("Scan Complete")
-        
     def stop_scan(self):
-
         self._log("Scan Stopped", "WARNING")
-
-        self.progress_bar.setValue(0)
-        self.progress_label.setText("0%")
-        self.prompt_label.setText("Prompt: 0 / 200")
-        self.remaining_label.setText("Remaining: 00:00:00")
-
-        self.completed.setText("0")
-        self.remaining.setText("200")
-        self.execution.setText("00:00:00")
-        self.average.setText("0 sec")
-        self.memory.setText("0 MB")
+        self.status_changed.emit("Scan Stopped")
 
         self.upload_button.setEnabled(True)
         self.start_scan_button.setEnabled(True)
         self.stop_scan_button.setEnabled(False)
 
-        self.status_changed.emit("Scan Stopped")
+    def export_report(self):
+
+        try:
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+            from reportlab.lib.styles import getSampleStyleSheet
+
+            report_path = "reports/NeuroFence_Report.pdf"
+
+            doc = SimpleDocTemplate(report_path)
+
+            styles = getSampleStyleSheet()
+
+            content = []
+
+            content.append(
+                Paragraph(
+                    "NeuroFence Security Report",
+                    styles["Title"]
+                )
+            )
+
+            content.append(Spacer(1, 20))
+
+            content.append(
+                Paragraph(
+                    f"Risk Score: {self.risk_score.text()}",
+                    styles["Normal"]
+                )
+            )
+
+            content.append(
+                Paragraph(
+                    f"Risk Level: {self.risk_status.text()}",
+                    styles["Normal"]
+                )
+            )
+
+            doc.build(content)
+
+            QMessageBox.information(
+                self,
+                "Report Generated",
+                "PDF created successfully."
+            )
+
+            self._log(
+                "PDF Report Generated",
+                "SUCCESS"
+            )
+
+        except Exception as e:
+
+            QMessageBox.critical(
+                self,
+                "PDF Error",
+                str(e)
+            )
+
+            self._log(
+                f"PDF Generation Failed: {e}",
+                "ERROR"
+            )
