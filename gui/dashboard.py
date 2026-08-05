@@ -263,6 +263,27 @@ class Dashboard(QWidget):
 
         content_layout.addWidget(activation_group)
 
+        history_group = QGroupBox("Previous Scans")
+        history_layout = QVBoxLayout()
+
+        self.history_table = QTableWidget()
+        self.history_table.setColumnCount(4)
+
+        self.history_table.setHorizontalHeaderLabels(
+            [
+                "Model Name",
+                "Date",
+                "Risk Score",
+                "Result"
+            ]
+        )
+
+        history_layout.addWidget(self.history_table)
+
+        history_group.setLayout(history_layout)
+
+        content_layout.addWidget(history_group)
+
         risk_group = QGroupBox("AI Security Score")
 
         risk_layout = QVBoxLayout()
@@ -277,7 +298,7 @@ class Dashboard(QWidget):
         self.risk_status = QLabel("SAFE")
 
         self.risk_status.setStyleSheet(
-            "font-size:18px; font-weight:bold; color:green;"
+            "font-size:18px; font-weight:bold;"
         )
 
         risk_layout.addWidget(self.risk_score)
@@ -288,9 +309,60 @@ class Dashboard(QWidget):
         risk_layout.setAlignment(self.risk_status, Qt.AlignmentFlag.AlignCenter)
 
         risk_group.setLayout(risk_layout)
+
         content_layout.addWidget(risk_group)
 
+        self.load_scan_history()
+     
+
+    def load_scan_history(self):
+
+        try:
+            path = "reports/scan_summary.json"
+
+            if os.path.exists(path):
+
+                with open(path, "r") as f:
+                    data = json.load(f)
+
+                self.history_table.setRowCount(1)
+
+                self.history_table.setItem(
+                    0, 0,
+                    QTableWidgetItem(
+                        "NeuroFence Scan"
+                    )
+                )
+
+                self.history_table.setItem(
+                    0, 1,
+                    QTableWidgetItem(
+                        datetime.now().strftime("%Y-%m-%d")
+                    )
+                )
+
+                self.history_table.setItem(
+                    0, 2,
+                    QTableWidgetItem(
+                        str(data.get("risk_score", "N/A"))
+                    )
+                )
+
+                self.history_table.setItem(
+                    0, 3,
+                    QTableWidgetItem(
+                        data.get("risk_level", "Unknown")
+                    )
+                )
+
+        except Exception as e:
+            self._log(
+                f"History load failed: {e}",
+                "ERROR"
+            ) 
+    
     def _log(self, message: str, level="INFO"):
+
 
         current_time = datetime.now().strftime("%H:%M:%S")
 
@@ -420,20 +492,40 @@ class Dashboard(QWidget):
             )
 
 
-            self._log(
-                f"Risk Level: {risk_level}",
-                "SUCCESS"
-            )
+        if risk_level == "Safe":
+            self.risk_status.setStyleSheet(
+                      "font-size:18px; font-weight:bold; color:green;"
+                  )
 
+        elif risk_level == "Low":
+            self.risk_status.setStyleSheet(
+                    "font-size:18px; font-weight:bold; color:orange;"
+                  )
 
-        self.upload_button.setEnabled(True)
-        self.start_scan_button.setEnabled(True)
-        self.stop_scan_button.setEnabled(False)
-        self.export_button.setEnabled(True)
+        elif risk_level == "Medium":
+            self.risk_status.setStyleSheet(
+                    "font-size:18px; font-weight:bold; color:darkorange;"
+                  )
 
+        elif risk_level == "High":
+            self.risk_status.setStyleSheet(
+                "font-size:18px; font-weight:bold; color:red;"
+                  )
+
+        else:
+            self.risk_status.setStyleSheet(
+                 "font-size:18px; font-weight:bold; color:black;"
+                  )
     def stop_scan(self):
-        self._log("Scan Stopped", "WARNING")
-        self.status_changed.emit("Scan Stopped")
+
+        self._log(
+            "Scan Stopped",
+            "WARNING"
+        )
+
+        self.status_changed.emit(
+            "Scan Stopped"
+        )
 
         self.upload_button.setEnabled(True)
         self.start_scan_button.setEnabled(True)
@@ -442,8 +534,13 @@ class Dashboard(QWidget):
     def export_report(self):
 
         try:
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+            from reportlab.platypus import (
+                SimpleDocTemplate,
+                Paragraph
+            )
+
             from reportlab.lib.styles import getSampleStyleSheet
+
 
             report_path = "reports/NeuroFence_Report.pdf"
 
@@ -459,8 +556,6 @@ class Dashboard(QWidget):
                     styles["Title"]
                 )
             )
-
-            content.append(Spacer(1, 20))
 
             content.append(
                 Paragraph(
@@ -478,15 +573,11 @@ class Dashboard(QWidget):
 
             doc.build(content)
 
+
             QMessageBox.information(
                 self,
                 "Report Generated",
-                "PDF created successfully."
-            )
-
-            self._log(
-                "PDF Report Generated",
-                "SUCCESS"
+                f"PDF created successfully.\n\n{report_path}"
             )
 
         except Exception as e:
@@ -495,9 +586,4 @@ class Dashboard(QWidget):
                 self,
                 "PDF Error",
                 str(e)
-            )
-
-            self._log(
-                f"PDF Generation Failed: {e}",
-                "ERROR"
             )

@@ -115,3 +115,30 @@ NeuroFence can now:
 - Detect spikes and dormant neurons.
 - Calculate an overall risk score.
 - Generate JSON reports for later visualization and reporting.
+  
+-
+## Day 5 – Final GUI Integration & Polish
+
+Completed backend integration with NeuroFence GUI.
+
+Completed:
+- Connected Start Scan button with backend pipeline
+- Added real activation summary viewer
+- Added risk score and risk level display
+- Integrated PDF report export
+- Added Previous Scans history panel
+- Added dashboard statistics display
+- Added error handling for scan and PDF failures
+- Tested complete workflow from model selection to report generation
+
+Testing:
+- GUI launched successfully
+- Scan completed successfully
+- Activation data displayed
+- Risk score displayed
+- PDF report generated successfully
+
+Bug Fixes:
+- Fixed Python indentation errors
+- Fixed backend import issues
+- Fixed GUI report generation issues
