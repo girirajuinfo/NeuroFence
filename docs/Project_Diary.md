@@ -115,3 +115,43 @@ NeuroFence can now:
 - Detect spikes and dormant neurons.
 - Calculate an overall risk score.
 - Generate JSON reports for later visualization and reporting.
+
+# Day 5 – Backend Finalization & Report Generation
+
+## Objective
+Completed the NeuroFence backend pipeline and prepared the project for release.
+
+## Completed Tasks
+- Implemented PDFReportGenerator in reports/pdf_generator.py.
+- Generated professional PDF scan reports.
+- Integrated PDF generation into the backend pipeline.
+- Completed backend API response structure.
+- Added memory cleanup and activation cache clearing.
+- Improved exception handling and logging.
+- Verified JSON report generation.
+- Performed end-to-end backend testing.
+
+## Testing
+- Verified model loading.
+- Verified prompt generation.
+- Verified activation tracking.
+- Verified activation analysis.
+- Verified risk scoring.
+- Verified JSON report generation.
+- Verified PDF report generation.
+- Executed complete automated test suite.
+
+Result:
+- All tests passed successfully.
+- Backend pipeline executed without errors.
+
+## Outcome
+NeuroFence backend can now:
+- Validate local Hugging Face models.
+- Execute prompts.
+- Capture neuron activations.
+- Analyze activation statistics.
+- Calculate risk levels.
+- Generate JSON reports.
+- Generate professional PDF reports.
+- Return structured backend results for GUI integration.
