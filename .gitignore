@@ -40,3 +40,12 @@ models/*.pt
 
 # Reports
 reports/*.pdf
+
+# Generated scan reports
+reports/layer_statistics.json
+reports/scan_summary.json
+reports/NeuroFence_Report.pdf
+
+# Python cache
+__pycache__/
+*.pyc
