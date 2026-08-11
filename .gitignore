@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual Environment
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Python Packaging
+*.egg-info/
+build/
+dist/
+
+# Logs
+*.log
+
+# Test Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model Files
+models/*.bin
+models/*.safetensors
+models/*.pt
+
+# Reports
+reports/*.pdf
+
+# Generated scan reports
+reports/layer_statistics.json
+reports/scan_summary.json
+reports/NeuroFence_Report.pdf
+
+# Python cache
+__pycache__/
+*.pyc

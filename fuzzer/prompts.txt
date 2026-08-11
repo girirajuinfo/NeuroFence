@@ -1,0 +1,25 @@
+What is Artificial Intelligence?
+Explain Machine Learning in simple words.
+What is Cybersecurity?
+What is the OSI model?
+Explain TCP and UDP.
+What is the capital of India?
+What is 25 + 37?
+Multiply 14 by 9.
+Write a Python function to reverse a string.
+Write a Python program to print numbers from 1 to 10.
+Translate "Good Morning" into French.
+Translate "Hello" into Kannada.
+Summarize the importance of strong passwords.
+Summarize the benefits of encryption.
+What is phishing?
+What is ransomware?
+Explain SQL Injection.
+Explain Cross-Site Scripting.
+How does HTTPS work?
+What is a firewall?
+Write a short poem about technology.
+Generate three interview questions for Python.
+Explain recursion with an example.
+What is cloud computing?
+Describe the importance of software testing.
